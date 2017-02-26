@@ -20,25 +20,26 @@ namespace UI.Lobby.Player
             settings = player.GetComponent<PlayerDataForClients>();
 
             // force a change when setup so we have initial settings
-            OnNameUpdateFromSettings(player, settings.GetName());
-            OnTeamUpdateFromSettings(player, settings.GetTeam());
-            OnServerUpdateFromSettings(player, settings.GetIsServerFlag());
+            UpdateNameFromSettings(player, settings.GetName());
+            UpdateTeamFromSettings(player, settings.GetTeam());
+            UpdateReadyFlagFromSettings(player, settings.GetIsReadyFlag());
+            UpdateServerFlagFromSettings(player, settings.GetIsServerFlag());
 
             // set up events so when client player settings change, hud updates
-            settings.OnNameUpdated += OnNameUpdateFromSettings;
-            settings.OnTeamUpdated += OnTeamUpdateFromSettings;
-            settings.OnIsReadyFlagUpdated += OnReadyUpdateFromSettings;
-            settings.OnIsServerFlagUpdated += OnServerUpdateFromSettings;
+            settings.OnNameUpdated += UpdateNameFromSettings;
+            settings.OnTeamUpdated += UpdateTeamFromSettings;
+            settings.OnIsReadyFlagUpdated += UpdateReadyFlagFromSettings;
+            settings.OnIsServerFlagUpdated += UpdateServerFlagFromSettings;
         }
 
         // used when PlayerDataForClients changes name
-        public void OnNameUpdateFromSettings(GameObject player, string name)
+        public void UpdateNameFromSettings(GameObject player, string name)
         {
             nameText.text = name;
         }
 
         // used when PlayerDataForClients changes team
-        public void OnTeamUpdateFromSettings(GameObject player, int teamId)
+        public void UpdateTeamFromSettings(GameObject player, int teamId)
         {
             if (teamId == PlayerDataForClients.TEAM_VIP) {
                 teamText.text = "VIP";
@@ -49,12 +50,12 @@ namespace UI.Lobby.Player
             }
         }
 
-        public void OnReadyUpdateFromSettings(GameObject player, bool isReady)
+        public void UpdateReadyFlagFromSettings (GameObject player, bool isReady)
         {
             isReadyBackground.SetActive(isReady);
         }
 
-        public void OnServerUpdateFromSettings(GameObject player, bool isServer)
+        public void UpdateServerFlagFromSettings(GameObject player, bool isServer)
         {
             isServerBackground.SetActive(isServer);
         }

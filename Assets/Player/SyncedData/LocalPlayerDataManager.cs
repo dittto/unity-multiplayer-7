@@ -1,5 +1,6 @@
 ﻿// Player/SyncedData/LocalPlayerDataManager.cs
 
+using GameState;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -13,41 +14,49 @@ namespace Player.SyncedData {
 
         public override void OnStartLocalPlayer()
         {
+            CreateDefaultValues();
+            State.GetInstance().Subscribe(
+                new StateOption()
+                    .GameState(State.GAME_OFFLINE), 
+                ResetValues
+            );
+
             LocalPlayerDataStore store = LocalPlayerDataStore.GetInstance();
-            if (store.playerColour == new Color(0, 0, 0, 0)) {
-                store.playerColour = Random.ColorHSV();
-            }
-            if (store.playerName == "") {
-                store.playerName = names[Random.Range(0, 8)];
-            }
-            if (store.team == 0) {
-                store.team = teams[Random.Range(0, 2)];
-            }
-            if (isServer) {
-                store.isServer = isServer;
-            }
-
-            clientData.SetColour(store.playerColour);
-            clientData.OnColourUpdated += OnPlayerColourUpdated;
-
             clientData.SetName(store.playerName);
-            clientData.OnNameUpdated += OnNameUpdated;
-            
             clientData.SetTeam(store.team);
-            clientData.OnTeamUpdated += OnTeamUpdated;
-
             clientData.SetIsReadyFlag(store.isReady);
-            clientData.OnIsReadyFlagUpdated += OnIsReadyFlagUpdated;
-
             clientData.SetIsServerFlag(store.isServer);
+
+            clientData.OnNameUpdated += OnNameUpdated;
+            clientData.OnTeamUpdated += OnTeamUpdated;
+            clientData.OnIsReadyFlagUpdated += OnIsReadyFlagUpdated;
             clientData.OnIsServerFlagUpdated += OnIsServerFlagUpdated;
         }
 
-        public void OnPlayerColourUpdated(GameObject player, Color newColour)
+        private void CreateDefaultValues ()
         {
-            LocalPlayerDataStore.GetInstance().playerColour = newColour;
+            LocalPlayerDataStore store = LocalPlayerDataStore.GetInstance();
+            if (store.playerName != "" || store.team != 0 | store.isServer != false || store.isReady != false) {
+                return;
+            }
+
+            store.playerName = names[Random.Range(0, 8)];
+            store.team = teams[Random.Range(0, 2)];
+
+            if (State.GetInstance().Network() == State.NETWORK_SERVER) {
+                store.isServer = true;
+            }
         }
 
+        private void ResetValues ()
+        {
+            LocalPlayerDataStore store = LocalPlayerDataStore.GetInstance();
+            store.playerName = "";
+            store.team = 0;
+            store.isServer = false;
+            store.isReady = false;
+        }
+        
         public void OnNameUpdated(GameObject player, string newName)
         {
             LocalPlayerDataStore.GetInstance().playerName = newName;

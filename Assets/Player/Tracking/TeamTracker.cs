@@ -20,6 +20,9 @@ namespace Player.Tracking {
                 AddTeamTrackingToPlayers(player);
             }
             PlayerTracker.GetInstance().OnPlayerAdded += AddTeamTrackingToPlayers;
+            PlayerTracker.GetInstance().OnPlayerRemoved += (GameObject player) => {
+                CountTeams();
+            };
         }
         
         public static TeamTracker GetInstance()

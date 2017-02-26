@@ -82,7 +82,9 @@ namespace UI.Lobby {
 
         private void UpdateVersusText(int vips, int inhumers)
         {
-            versusText.text = vips + " vs " + inhumers;
+            if (versusText != null) {
+                versusText.text = vips + " vs " + inhumers;
+            }
         }
     }
 }

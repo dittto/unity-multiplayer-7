@@ -6,8 +6,7 @@ namespace Player.SyncedData {
     public class LocalPlayerDataStore {
 
         private static LocalPlayerDataStore instance;
-
-        public Color playerColour;
+        
         public string playerName = "";
         public int team = 0;
         public bool isReady = false;

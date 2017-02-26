@@ -17,13 +17,14 @@ class ChangePlayerColours:MonoBehaviour {
     public void AddColourChangeEvent (GameObject player)
     {
         PlayerDataForClients playerData = player.GetComponent<PlayerDataForClients>();
-        HandlePlayerColourChange(player, playerData.GetColour());
-        playerData.OnColourUpdated += HandlePlayerColourChange;
+        HandlePlayerColourChange(player, playerData.GetTeam());
+        playerData.OnTeamUpdated += HandlePlayerColourChange;
     }
 
-    public void HandlePlayerColourChange (GameObject player, Color newColour)
+    public void HandlePlayerColourChange (GameObject player, int newTeam)
     {
-        player.GetComponentInChildren<MeshRenderer>().material.color = newColour;
+        PlayerDataForClients playerData = player.GetComponent<PlayerDataForClients>();
+        player.GetComponentInChildren<MeshRenderer>().material.color = newTeam == PlayerDataForClients.TEAM_VIP ? Color.red : Color.blue;
     }
 }
 

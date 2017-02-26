@@ -24,10 +24,11 @@ namespace UI.Lobby.Player
 
             UpdateNameFromSettings(player, settings.GetName());
             UpdateTeamWithSettings(player, settings.GetTeam());
+            UpdateReadyFlagFromSettings(player, settings.GetIsReadyFlag());
 
             settings.OnNameUpdated += UpdateNameFromSettings;
             settings.OnTeamUpdated += UpdateTeamWithSettings;
-            settings.OnIsReadyFlagUpdated += OnReadyUpdateFromSettings;
+            settings.OnIsReadyFlagUpdated += UpdateReadyFlagFromSettings;
         }
 
         // sent from UI to change name
@@ -63,7 +64,7 @@ namespace UI.Lobby.Player
             }
         }
 
-        public void OnReadyUpdateFromSettings(GameObject player, bool isReady)
+        public void UpdateReadyFlagFromSettings(GameObject player, bool isReady)
         {
             readyBackground.SetActive(isReady);
             nameText.gameObject.SetActive(isReady);

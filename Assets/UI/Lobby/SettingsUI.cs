@@ -34,16 +34,16 @@ namespace UI.Lobby {
         private bool allowServerStart = false;
         
         public void Start()
-        {
+        {   
             if (State.GetInstance().Network() == State.NETWORK_CLIENT) {
                 clientUI.SetActive(true);
-                return;
             }
-
-            serverUI.SetActive(true);
-            ChangeLevel(serverLevelSelect);
-            ChangeTimeLimit(serverTimeSelect);
-            SetIPAddress();
+            else {
+                serverUI.SetActive(true);
+                ChangeLevel(serverLevelSelect);
+                ChangeTimeLimit(serverTimeSelect);
+                SetIPAddress();
+            }
         }
 
         public void OnGUI()
@@ -74,10 +74,14 @@ namespace UI.Lobby {
         public void SetReadyState(bool isReady)
         {
             PlayerTracker.GetInstance().GetLocalPlayer().GetComponent<PlayerDataForClients>().SetIsReadyFlag(isReady);
+            if (readyWaitingButton == null || readyNowButton == null) {
+                return;
+            }
+
             readyWaitingButton.SetActive(!isReady);
             readyNowButton.SetActive(isReady);
         }
-        
+
         public void LeaveLobby()
         {
             if (State.GetInstance().Network() == State.NETWORK_CLIENT) {
@@ -118,7 +122,6 @@ namespace UI.Lobby {
         [ServerCallback]
         private void UpdateServerStartButton()
         {
-            // TODO: create new tracker called team tracker
             int[] teams = TeamTracker.GetInstance().GetTeams();
             if (teams[0] == 0 || teams[1] == 0) {
                 startGameButtonText.text = "Waiting for teams";

@@ -3,10 +3,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Player.Tracking
-{
-    public class PlayerTracker
-    {
+namespace Player.Tracking {
+    public class PlayerTracker {
+
         private static PlayerTracker instance;
 
         public delegate void LocalPlayerUpdated(GameObject localPlayer);

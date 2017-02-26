@@ -8,9 +8,7 @@ namespace Player.SyncedData {
 
         public const int TEAM_VIP = 1;
         public const int TEAM_INHUMER = 2;
-
-        public delegate void ColourUpdated(GameObject player, Color newColour);
-        public event ColourUpdated OnColourUpdated;
+        
         public delegate void NameUpdated(GameObject player, string playerName);
         public event NameUpdated OnNameUpdated;
         public delegate void TeamUpdated(GameObject player, int team);
@@ -19,9 +17,7 @@ namespace Player.SyncedData {
         public event IsReadyFlagUpdated OnIsReadyFlagUpdated;
         public delegate void IsServerFlagUpdated (GameObject player, bool isServer);
         public event IsServerFlagUpdated OnIsServerFlagUpdated;
-
-        [SyncVar(hook = "UpdateColour")]
-        private Color colour;
+        
         [SyncVar(hook = "UpdateName")]
         private string playerName;
         [SyncVar(hook = "UpdateTeam")]
@@ -36,40 +32,13 @@ namespace Player.SyncedData {
             // don't update for local player as handled by LocalPlayerOptionsManager
             // don't update for server as the server will know on Command call from local player
             if (!isLocalPlayer && !isServer) {
-                UpdateColour(colour);
                 UpdateName(playerName);
                 UpdateTeam(team);
                 UpdateIsReadyFlag(isReadyFlag);
                 UpdateIsServerFlag(isServerFlag);
             }
         }
-
-        public Color GetColour()
-        {
-            return colour;
-        }
-
-        [Client]
-        public void SetColour(Color newColour)
-        {
-            CmdSetColour(newColour);
-        }
-
-        [Command]
-        public void CmdSetColour(Color newColour)
-        {
-            colour = newColour;
-        }
-
-        [Client]
-        public void UpdateColour(Color newColour)
-        {
-            colour = newColour;
-            if (this.OnColourUpdated != null) {
-                this.OnColourUpdated(gameObject, newColour);
-            }
-        }
-
+        
         public string GetName()
         {
             return playerName;

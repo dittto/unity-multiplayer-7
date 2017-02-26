@@ -4,10 +4,9 @@ using Player.SyncedData;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Player.Tracking
-{
-    class TrackedPlayer : NetworkBehaviour
-    {
+namespace Player.Tracking {
+    class TrackedPlayer : NetworkBehaviour {
+
         public override void OnStartClient ()
         {
             PlayerTracker.GetInstance().AddPlayer(gameObject);
