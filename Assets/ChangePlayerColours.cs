@@ -23,7 +23,6 @@ class ChangePlayerColours:MonoBehaviour {
 
     public void HandlePlayerColourChange (GameObject player, int newTeam)
     {
-        PlayerDataForClients playerData = player.GetComponent<PlayerDataForClients>();
         player.GetComponentInChildren<MeshRenderer>().material.color = newTeam == PlayerDataForClients.TEAM_VIP ? Color.red : Color.blue;
     }
 }
