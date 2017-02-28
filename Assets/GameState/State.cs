@@ -27,9 +27,12 @@ namespace GameState
         private static State instance;
 
         private string networkState;
-        private string gameState;
         private string previousNetworkState;
+        private string gameState;
         private string previousGameState;
+
+        private bool isNetworkDirty = false;
+        private bool isGameDirty = false;
 
         private State () { }
 
@@ -44,8 +47,11 @@ namespace GameState
 
         public State Network (string newNetworkState)
         {
-            previousNetworkState = networkState;
-            networkState = newNetworkState;
+            if (newNetworkState != networkState) {
+                previousNetworkState = networkState;
+                networkState = newNetworkState;
+                isNetworkDirty = true;
+            }
 
             return this;
         }
@@ -57,8 +63,11 @@ namespace GameState
 
         public State Game (string newGameState)
         {
-            previousGameState = gameState;
-            gameState = newGameState;
+            if (newGameState != gameState) {
+                previousGameState = gameState;
+                gameState = newGameState;
+                isGameDirty = true;
+            }
 
             return this;
         }
@@ -77,21 +86,34 @@ namespace GameState
             if (!subscribers.Contains(subscriberOption)) {
                 subscribers.Add(subscriberOption);
             }
-            PublishIfMatches(subscriberOption);
+            PublishIfMatches(subscriberOption, true);
         }
 
         public void Publish ()
         {
-            // Debug.Log("State: " + networkState + " | " + previousGameState + " > " + gameState);
+            // Debug.Log("Publish State: " + networkState + " | " + previousGameState + " > " + gameState);
+            // Debug.Log("Publish dirty state: " + isNetworkDirty + " " + isGameDirty + " " + isLevelDirty);
 
             foreach (SubscriberOptions subscriberOption in subscribers) {
                 PublishIfMatches(subscriberOption);
             }
+
+            isNetworkDirty = false;
+            isGameDirty = false;
         }
 
-        private void PublishIfMatches (SubscriberOptions subscriberOption)
+        private void PublishIfMatches(SubscriberOptions subscriberOption, bool forceDirtyBit = false)
         {
-            if (subscriberOption.option.Matches(previousNetworkState, previousGameState, networkState, gameState)) {
+            if (
+                subscriberOption.option.Matches(
+                    previousNetworkState,
+                    previousGameState,
+                    networkState,
+                    gameState,
+                    forceDirtyBit ? true : isNetworkDirty,
+                    forceDirtyBit ? true : isGameDirty
+                )
+            ) {
                 subscriberOption.subscriber();
             }
         }

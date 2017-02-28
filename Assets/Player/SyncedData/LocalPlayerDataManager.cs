@@ -14,14 +14,28 @@ namespace Player.SyncedData {
 
         public override void OnStartLocalPlayer()
         {
-            CreateDefaultValues();
+            LocalPlayerDataStore store = LocalPlayerDataStore.GetInstance();
+
             State.GetInstance().Subscribe(
-                new StateOption()
-                    .GameState(State.GAME_OFFLINE), 
-                ResetValues
+                new StateOption().GameState(State.GAME_OFFLINE),
+                () => {
+                    if (clientData != null) {
+                        clientData.SetName("");
+                        clientData.SetTeam(0);
+                        clientData.SetIsServerFlag(false);
+                        clientData.SetIsReadyFlag(false);
+                    }
+                    else {
+                        store.playerName = "";
+                        store.team = 0;
+                        store.isReady = false;
+                        store.isServer = false;
+                    }
+                }
             );
 
-            LocalPlayerDataStore store = LocalPlayerDataStore.GetInstance();
+            CreateDefaultValues();
+
             clientData.SetName(store.playerName);
             clientData.SetTeam(store.team);
             clientData.SetIsReadyFlag(store.isReady);
@@ -46,15 +60,6 @@ namespace Player.SyncedData {
             if (State.GetInstance().Network() == State.NETWORK_SERVER) {
                 store.isServer = true;
             }
-        }
-
-        private void ResetValues ()
-        {
-            LocalPlayerDataStore store = LocalPlayerDataStore.GetInstance();
-            store.playerName = "";
-            store.team = 0;
-            store.isServer = false;
-            store.isReady = false;
         }
         
         public void OnNameUpdated(GameObject player, string newName)
